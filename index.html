@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>MMP MinTug</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <meta name="theme-color" content="#0B3C5D" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="brand">
+        <img class="logo" src="icons/icon-192.png" alt="App icon" />
+        <h1 class="title">MMP MinTug</h1>
+      </div>
+
+      <div class="controls">
+        <div class="row">
+          <button id="btnBerth" class="chip chip-selected" type="button">Berthing</button>
+          <button id="btnUnberth" class="chip" type="button">Unberthing</button>
+        </div>
+
+        <label class="field">
+          <span class="label">Jetty / Location</span>
+          <select id="locationSelect" class="input"></select>
+        </label>
+
+        <label class="field">
+          <span class="label">LOA (m)</span>
+          <input id="loaInput" class="input" inputmode="decimal" placeholder="e.g. 280" />
+        </label>
+
+        <button id="calcBtn" class="primary" type="button">Calculate</button>
+
+        <div id="error" class="error" role="alert" aria-live="polite"></div>
+      </div>
+    </header>
+
+    <main class="results" id="results">
+      <div id="emptyState" class="muted">
+        Enter LOA and press <b>Calculate</b>.
+      </div>
+
+      <section id="resultCard" class="card hidden" aria-live="polite">
+        <div class="resultTop">
+          <div class="resultLabel">Required tugs</div>
+          <div id="tugsOut" class="tugs">—</div>
+        </div>
+
+        <div class="kv">
+          <div class="k">Matched band</div>
+          <div id="bandOut" class="v">—</div>
+        </div>
+
+        <div class="block">
+          <div class="blockTitle">Rule</div>
+          <div id="ruleOut" class="blockBody muted">—</div>
+        </div>
+
+        <div class="block">
+          <div class="blockTitle">Additional notes</div>
+          <div id="notesOut" class="blockBody muted">—</div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <hr />
+        <p class="disclaimer">
+          Disclaimer: Whilst the Malta Maritime Pilots Co-Operative Ltd has endeavoured to ensure that the material supplied is suitable and correct at the date of publication, the Malta Maritime Pilots Co-Operative Ltd. accepts no liability for any damage or loss of any nature arising from the use of this app or any information contained within it. The material supplied is used entirely at the user’s own risk and the information or diagrams may not be reproduced without the developer's written consent. The information contained in this app has to be read and construed in conjunction with the applicable notice to mariners at that particular time of use.
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js');
+    }
+  </script>
+</body>
+</html>
