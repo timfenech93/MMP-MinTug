@@ -247,7 +247,7 @@
             You must read and acknowledge the above before you can use <b>Calculate</b>.
           </p>
         </div>
-
+        
         <!-- Disclaimer -->
         <button id="openDisclaimer" class="modalBtn legalPrimary" type="button">
           Disclaimer
@@ -457,6 +457,45 @@
     })();
   </script>
 
+<script>
+  (function () {
+    const loaInput = document.getElementById('loaInput');
+    const calcBtn = document.getElementById('calcBtn');
+
+    if (!loaInput || !calcBtn) return;
+
+    const roundUpLOA = () => {
+      const raw = loaInput.value.trim();
+
+      if (raw === '') return;
+
+      const num = Number(raw);
+
+      // Ignore invalid numbers
+      if (isNaN(num)) return;
+
+      // Round UP to nearest whole number
+      const rounded = Math.ceil(num);
+
+      // Write back the rounded value so backend always sees an integer
+      loaInput.value = rounded.toString();
+    };
+
+    // Ensure rounding happens BEFORE any backend calculation
+    calcBtn.addEventListener(
+      'click',
+      () => {
+        roundUpLOA();
+      },
+      true // capture phase → runs before app.js handlers
+    );
+
+    // Optional: also round when user leaves the field
+    loaInput.addEventListener('blur', roundUpLOA);
+  })();
+</script>
+
+  
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./service-worker.js');
