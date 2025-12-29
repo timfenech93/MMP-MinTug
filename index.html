@@ -9,7 +9,6 @@
   <meta name="theme-color" content="#0B3C5D" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Inline additions: Legal + Info modal popup styling -->
   <style>
     /* =========================
        SHARED BUTTON BASE
@@ -24,22 +23,17 @@
       cursor: pointer;
       transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.15s ease;
     }
-
     .modalBtn:hover { opacity: 0.95; }
     .modalBtn:active { transform: translateY(1px); }
 
-    /* =========================
-       BLUE (INFO) BUTTON
-       ========================= */
+    /* BLUE INFO BUTTON */
     .modalBtn.infoPrimary {
       background: linear-gradient(135deg, #0B3C5D, #145A82);
       color: #ffffff;
       box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     }
 
-    /* =========================
-       AMBER (LEGAL) BUTTON
-       ========================= */
+    /* AMBER LEGAL BUTTON */
     .modalBtn.legalPrimary {
       background: linear-gradient(135deg, #F4B400, #E09B00);
       color: #2b1c00;
@@ -50,6 +44,15 @@
       background: #eee;
       color: #333;
       font-weight: 600;
+    }
+
+    /* Disabled state (for Calculate + Accept) */
+    button:disabled,
+    .modalBtn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
     }
 
     /* =========================
@@ -65,9 +68,15 @@
 
     .preReadTitle {
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       margin: 0 0 10px 0;
       opacity: 0.95;
+    }
+
+    .preReadHint {
+      margin: 10px 0 0 0;
+      font-size: 12px;
+      opacity: 0.85;
     }
 
     /* =========================
@@ -106,7 +115,7 @@
     .modalTitle {
       padding: 16px;
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 900;
       border-bottom: 1px solid #eee;
       margin: 0;
     }
@@ -131,12 +140,41 @@
       margin: 0 0 8px 0;
     }
 
+    .modalBody a {
+      color: #0B3C5D;
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
     .modalActions {
       padding: 12px 16px;
       border-top: 1px solid #eee;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ackRow {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #ddd;
+    }
+
+    .ackRow input {
+      margin-top: 3px;
+    }
+
+    .ackText {
+      font-size: 12.5px;
+      line-height: 1.35;
+      color: #333;
     }
   </style>
 </head>
+
 <body>
   <div class="app">
     <header class="header">
@@ -197,32 +235,28 @@
       <div class="footer">
         <hr />
 
-        <!-- NEW: Box above the disclaimer button -->
+        <!-- PRE-READ (forced before Calculate) -->
         <div class="preReadBox">
           <div class="preReadTitle">Please read before using the calculator.</div>
 
-          <button
-            id="openPreRead"
-            class="modalBtn infoPrimary"
-            type="button"
-          >
+          <button id="openPreRead" class="modalBtn infoPrimary" type="button">
             Please read before using the calculator
           </button>
+
+          <p id="preReadHint" class="preReadHint">
+            You must read and acknowledge the above before you can use <b>Calculate</b>.
+          </p>
         </div>
 
-        <!-- Existing: Legal-looking button that opens the disclaimer modal -->
-        <button
-          id="openDisclaimer"
-          class="modalBtn legalPrimary"
-          type="button"
-        >
+        <!-- Disclaimer -->
+        <button id="openDisclaimer" class="modalBtn legalPrimary" type="button">
           Disclaimer
         </button>
       </div>
     </main>
   </div>
 
-  <!-- NEW: PRE-READ MODAL -->
+  <!-- PRE-READ MODAL -->
   <div id="preReadModal" class="modalOverlay" aria-hidden="true">
     <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="preReadTitle">
       <h2 id="preReadTitle" class="modalTitle">
@@ -244,16 +278,40 @@
           <li>Day light restrictions apply in the case of specific berths and docking operations.</li>
         </ol>
 
-        <p><b>N.B.</b> For more information please refer to the Minimum Towage Requirement, latest revision. At the time of writing, the latest revision is 3.0, published as Port Notice 02 of 2025.</p>
+        <p>
+          <b>N.B.</b> For more information please refer to the Minimum Towage Requirement, latest revision.
+          At the time of writing, the latest revision is <b>3.0</b>, published as <b>Port Notice 02 of 2025</b>.
+        </p>
+
+        <p>
+          Official document:
+          <a
+            href="https://www.transport.gov.mt/include/filestreaming.asp?fileid=10554"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Port Notice 02/2025 — Minimum Towage Requirements (Rev 3.0)</a>
+        </p>
+
+        <div class="ackRow">
+          <input id="ackCheckbox" type="checkbox" />
+          <label for="ackCheckbox" class="ackText">
+            I confirm that I have read and understood the above information and I acknowledge that the output of this calculator does not replace professional judgement and applicable notices/regulations.
+          </label>
+        </div>
       </div>
 
       <div class="modalActions">
-        <button id="closePreRead" class="modalBtn secondary" type="button">Close</button>
+        <button id="acceptPreRead" class="modalBtn infoPrimary" type="button" disabled>
+          I Agree / Continue
+        </button>
+        <button id="closePreRead" class="modalBtn secondary" type="button">
+          Close
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- EXISTING: LEGAL DISCLAIMER MODAL -->
+  <!-- DISCLAIMER MODAL -->
   <div id="disclaimerModal" class="modalOverlay" aria-hidden="true">
     <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="disclaimerTitle">
       <h2 id="disclaimerTitle" class="modalTitle">
@@ -275,16 +333,18 @@
       </div>
 
       <div class="modalActions">
-        <button id="closeDisclaimer" class="modalBtn secondary" type="button">Close</button>
+        <button id="closeDisclaimer" class="modalBtn secondary" type="button">
+          Close
+        </button>
       </div>
     </div>
   </div>
 
   <script src="app.js"></script>
 
-  <!-- Modal behaviour: open/close for both modals, close on overlay click, close on ESC -->
   <script>
     (function () {
+      // -------- Modal helper ----------
       function setupModal(openBtnId, modalId, closeBtnId) {
         const openBtn = document.getElementById(openBtnId);
         const modal = document.getElementById(modalId);
@@ -322,10 +382,78 @@
             closeModal();
           }
         });
+
+        return { openModal, closeModal, modal, openBtn, closeBtn };
       }
 
+      // Disclaimer modal
       setupModal('openDisclaimer', 'disclaimerModal', 'closeDisclaimer');
-      setupModal('openPreRead', 'preReadModal', 'closePreRead');
+
+      // Pre-read modal
+      const preRead = setupModal('openPreRead', 'preReadModal', 'closePreRead');
+
+      // -------- Forced "Please read" gate ----------
+      const STORAGE_KEY = 'mmp_preread_accepted_v1';
+
+      const calcBtn = document.getElementById('calcBtn');
+      const hint = document.getElementById('preReadHint');
+
+      const ackCheckbox = document.getElementById('ackCheckbox');
+      const acceptBtn = document.getElementById('acceptPreRead');
+
+      const isAccepted = () => localStorage.getItem(STORAGE_KEY) === 'true';
+
+      const setAcceptedUI = (accepted) => {
+        if (!calcBtn) return;
+
+        calcBtn.disabled = !accepted;
+        calcBtn.setAttribute('aria-disabled', String(!accepted));
+
+        if (hint) {
+          hint.style.display = accepted ? 'none' : 'block';
+        }
+      };
+
+      // Initial state on load
+      setAcceptedUI(isAccepted());
+
+      // If not accepted, block Calculate clicks and prompt modal
+      if (calcBtn) {
+        calcBtn.addEventListener('click', (e) => {
+          if (!isAccepted()) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Open the pre-read modal if user tries to calculate
+            if (preRead && preRead.openModal) preRead.openModal();
+            return;
+          }
+        }, true); // capture to intercept before app.js handlers
+      }
+
+      // Enable "I Agree" only when checkbox is ticked
+      if (ackCheckbox && acceptBtn) {
+        const syncAccept = () => {
+          acceptBtn.disabled = !ackCheckbox.checked;
+        };
+        ackCheckbox.addEventListener('change', syncAccept);
+        syncAccept();
+
+        acceptBtn.addEventListener('click', () => {
+          localStorage.setItem(STORAGE_KEY, 'true');
+          localStorage.setItem(STORAGE_KEY + '_ts', new Date().toISOString());
+          setAcceptedUI(true);
+
+          // close modal
+          const modal = document.getElementById('preReadModal');
+          if (modal) {
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+          }
+
+          // focus Calculate for convenience
+          if (calcBtn) calcBtn.focus();
+        });
+      }
     })();
   </script>
 
