@@ -4,18 +4,184 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>MMP MinTug</title>
-
-  <!-- Force browsers to revalidate HTML (helps with GitHub Pages + mobile caches) -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icons/icon-192.png" alt="" />
   <meta name="theme-color" content="#0B3C5D" />
+  <link rel="stylesheet" href="styles.css" />
 
-  <!-- Version query strings help bust cache for CSS/JS -->
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <style>
+    /* =========================
+       SHARED BUTTON BASE
+       ========================= */
+    /* ===== BUTTON BASE ===== */
+    .modalBtn {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.15s ease;
+      transition: transform 0.1s ease, opacity 0.15s ease;
+    }
+    .modalBtn:hover { opacity: 0.95; }
+    .modalBtn:active { transform: translateY(1px); }
+
+    /* BLUE INFO BUTTON */
+    .modalBtn.infoPrimary {
+      background: linear-gradient(135deg, #0B3C5D, #145A82);
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      color: #fff;
+    }
+
+    /* AMBER LEGAL BUTTON */
+    .modalBtn.legalPrimary {
+      background: linear-gradient(135deg, #F4B400, #E09B00);
+      color: #2b1c00;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    .modalBtn.secondary {
+      background: #eee;
+      color: #333;
+      font-weight: 600;
+    }
+
+    /* Disabled state (for Calculate + Accept) */
+    button:disabled,
+    .modalBtn:disabled {
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* =========================
+       BOX ABOVE DISCLAIMER BUTTON
+       ========================= */
+    .preReadBox {
+      margin: 12px 0 12px 0;
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .preReadTitle {
+      font-size: 13px;
+      font-weight: 800;
+      margin: 0 0 10px 0;
+      opacity: 0.95;
+      margin-bottom: 10px;
+    }
+
+    .preReadHint {
+      margin: 10px 0 0 0;
+      font-size: 12px;
+      opacity: 0.85;
+    }
+
+    /* =========================
+       MODAL OVERLAY
+       ========================= */
+    .modalOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 14px; /* helps on very small screens */
+      padding: 14px;
+    }
+    .modalOverlay.active { display: flex; }
+
+    .modalOverlay.active {
+      display: flex;
+    }
+
+    /* =========================
+       MODAL CARD
+       ========================= */
+    .modalCard {
+      background: #ffffff;
+      background: #fff;
+      width: 92%;
+      max-width: 560px;
+      max-height: 85vh;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+
+    .modalTitle {
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 900;
+      border-bottom: 1px solid #eee;
+      margin: 0;
+    }
+
+    .modalBody {
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-y: auto;
+    }
+
+    .modalBody p {
+      margin: 0 0 12px 0;
+    }
+
+    .modalBody ol {
+      margin: 10px 0 12px 18px;
+      padding: 0;
+    }
+
+    .modalBody li {
+      margin: 0 0 8px 0;
+    }
+
+    .modalBody a {
+      color: #0B3C5D;
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
+    .modalActions {
+      padding: 12px 16px;
+      border-top: 1px solid #eee;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ackRow {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #ddd;
+    }
+
+    .ackRow input {
+      margin-top: 3px;
+    }
+
+    .ackText {
+      font-size: 12.5px;
+      line-height: 1.35;
+      color: #333;
+    }
+  </style>
 </head>
 
 <body>
@@ -31,27 +197,53 @@
           <button id="btnBerth" class="chip chip-selected" type="button">Berthing</button>
           <button id="btnUnberth" class="chip" type="button">Unberthing</button>
         </div>
+<div class="app">
+  <header class="header">
+    <div class="brand">
+      <img class="logo" src="icons/icon-192.png" alt="App icon" />
+      <h1 class="title">MMP MinTug</h1>
+    </div>
 
         <label class="field">
           <span class="label">Jetty / Location</span>
           <select id="locationSelect" class="input"></select>
         </label>
+    <div class="controls">
+      <div class="row">
+        <button id="btnBerth" class="chip chip-selected">Berthing</button>
+        <button id="btnUnberth" class="chip">Unberthing</button>
+      </div>
 
         <label class="field">
           <span class="label">LOA (m)</span>
-          <input id="loaInput" class="input" inputmode="decimal" placeholder="e.g. 280.125" />
+          <input id="loaInput" class="input" inputmode="decimal" placeholder="e.g. 280" />
         </label>
+      <label class="field">
+        <span class="label">Jetty / Location</span>
+        <select id="locationSelect" class="input"></select>
+      </label>
 
         <button id="calcBtn" class="primary" type="button">Calculate</button>
+      <label class="field">
+        <span class="label">LOA (m)</span>
+        <input id="loaInput" class="input" inputmode="decimal" placeholder="e.g. 280.125" />
+      </label>
 
         <div id="error" class="error" role="alert" aria-live="polite"></div>
       </div>
     </header>
+      <button id="calcBtn" class="primary">Calculate</button>
+      <div id="error" class="error"></div>
+    </div>
+  </header>
 
     <main class="results" id="results">
       <div id="emptyState" class="muted">
         Select Berth, Choose Berthing or Unberthing, Enter LOA and press <b>Calculate</b>.
       </div>
+  <main class="results">
+    <div class="footer">
+      <hr />
 
       <section id="resultCard" class="card hidden" aria-live="polite">
         <div class="resultTop">
@@ -94,6 +286,10 @@
         <!-- Disclaimer -->
         <button id="openDisclaimer" class="modalBtn legalPrimary" type="button">
           Disclaimer
+      <div class="preReadBox">
+        <div class="preReadTitle">Please read before using the calculator.</div>
+        <button id="openPreRead" class="modalBtn infoPrimary">
+          Please read before using the calculator
         </button>
       </div>
     </main>
@@ -142,6 +338,35 @@
           </label>
         </div>
       </div>
+      <button id="openDisclaimer" class="modalBtn legalPrimary">
+        Disclaimer
+      </button>
+    </div>
+  </main>
+</div>
+
+<!-- PRE-READ MODAL -->
+<div id="preReadModal" class="modalOverlay">
+  <div class="modalCard">
+    <div class="modalTitle">Please read before using the calculator</div>
+    <div class="modalBody">
+      <p>
+        For more information please refer to the Minimum Towage Requirement,
+        latest revision 3.0 – Port Notice 02 of 2025.
+      </p>
+
+      <p>
+        <a href="https://www.transport.gov.mt/include/filestreaming.asp?fileid=10554"
+           target="_blank" rel="noopener noreferrer">
+          Port Notice 02/2025 – Minimum Towage Requirements (Rev 3.0)
+        </a>
+      </p>
+
+      <label>
+        <input id="ackCheckbox" type="checkbox" />
+        I have read and understood the above.
+      </label>
+    </div>
 
       <div class="modalActions">
         <button id="acceptPreRead" class="modalBtn infoPrimary" type="button" disabled>
@@ -151,6 +376,9 @@
           Close
         </button>
       </div>
+    <div class="modalActions">
+      <button id="acceptPreRead" class="modalBtn infoPrimary" disabled>I Agree / Continue</button>
+      <button id="closePreRead" class="modalBtn secondary">Close</button>
     </div>
   </div>
 
@@ -180,11 +408,24 @@
           Close
         </button>
       </div>
+</div>
+
+<!-- DISCLAIMER MODAL -->
+<div id="disclaimerModal" class="modalOverlay">
+  <div class="modalCard">
+    <div class="modalTitle">Important Information & Disclaimer</div>
+    <div class="modalBody">
+      <p>
+        Whilst the Malta Maritime Pilots Co-Operative Ltd has endeavoured to ensure accuracy,
+        no liability is accepted for loss or damage arising from the use of this app.
+      </p>
+    </div>
+    <div class="modalActions">
+      <button id="closeDisclaimer" class="modalBtn secondary">Close</button>
     </div>
   </div>
 
-  <!-- Version query string helps bust cache for app.js -->
-  <script src="app.js?v=4"></script>
+  <script src="app.js"></script>
 
   <script>
     (function () {
@@ -227,8 +468,56 @@
           }
         });
 
-        return { openModal, closeModal };
+        return { openModal, closeModal, modal, openBtn, closeBtn };
+</div>
+
+<script src="app.js"></script>
+
+<script>
+(function () {
+
+  /* ===== MODAL HANDLER ===== */
+  function modal(openId, modalId, closeId) {
+    const o = document.getElementById(openId);
+    const m = document.getElementById(modalId);
+    const c = document.getElementById(closeId);
+    if (!o || !m || !c) return;
+
+    o.onclick = () => m.classList.add('active');
+    c.onclick = () => m.classList.remove('active');
+    m.onclick = e => { if (e.target === m) m.classList.remove('active'); };
+  }
+
+  modal('openPreRead','preReadModal','closePreRead');
+  modal('openDisclaimer','disclaimerModal','closeDisclaimer');
+
+  /* ===== FORCE PRE-READ ===== */
+  const STORAGE = 'mmp_preread_ok';
+  const calcBtn = document.getElementById('calcBtn');
+  const ack = document.getElementById('ackCheckbox');
+  const accept = document.getElementById('acceptPreRead');
+
+  const accepted = () => localStorage.getItem(STORAGE) === 'true';
+
+  if (calcBtn) calcBtn.disabled = !accepted();
+
+  if (ack && accept) {
+    ack.onchange = () => accept.disabled = !ack.checked;
+    accept.onclick = () => {
+      localStorage.setItem(STORAGE, 'true');
+      document.getElementById('preReadModal').classList.remove('active');
+      if (calcBtn) calcBtn.disabled = false;
+    };
+  }
+
+  if (calcBtn) {
+    calcBtn.addEventListener('click', e => {
+      if (!accepted()) {
+        e.preventDefault();
+        document.getElementById('preReadModal').classList.add('active');
       }
+    }, true);
+  }
 
       // Disclaimer modal
       setupModal('openDisclaimer', 'disclaimerModal', 'closeDisclaimer');
@@ -244,19 +533,33 @@
 
       const ackCheckbox = document.getElementById('ackCheckbox');
       const acceptBtn = document.getElementById('acceptPreRead');
+  /* ===== LOA ROUND-UP FIX (CRITICAL) ===== */
+  const loaInput = document.getElementById('loaInput');
 
       const isAccepted = () => localStorage.getItem(STORAGE_KEY) === 'true';
+  const roundUpLOA = () => {
+    if (!loaInput || loaInput.value.trim() === '') return;
+    const n = Number(loaInput.value);
+    if (isNaN(n)) return;
+    loaInput.value = Math.ceil(n).toString();
+  };
 
       const setAcceptedUI = (accepted) => {
         if (!calcBtn) return;
+  // Round when leaving field
+  loaInput?.addEventListener('blur', roundUpLOA);
 
         calcBtn.disabled = !accepted;
         calcBtn.setAttribute('aria-disabled', String(!accepted));
+  // Round BEFORE backend logic
+  calcBtn?.addEventListener('click', roundUpLOA, true);
 
         if (hint) {
           hint.style.display = accepted ? 'none' : 'block';
         }
       };
+})();
+</script>
 
       // Initial state on load
       setAcceptedUI(isAccepted());
@@ -267,10 +570,11 @@
           if (!isAccepted()) {
             e.preventDefault();
             e.stopPropagation();
+            // Open the pre-read modal if user tries to calculate
             if (preRead && preRead.openModal) preRead.openModal();
             return;
           }
-        }, true);
+        }, true); // capture to intercept before app.js handlers
       }
 
       // Enable "I Agree" only when checkbox is ticked
@@ -297,49 +601,18 @@
           if (calcBtn) calcBtn.focus();
         });
       }
-
-      // -------- LOA ROUND-UP FIX ----------
-      const loaInput = document.getElementById('loaInput');
-
-      const roundUpLOA = () => {
-        if (!loaInput) return;
-        const raw = loaInput.value.trim();
-        if (raw === '') return;
-
-        const num = Number(raw);
-        if (isNaN(num)) return;
-
-        const rounded = Math.ceil(num);
-        loaInput.value = String(rounded);
-      };
-
-      loaInput?.addEventListener('blur', roundUpLOA);
-      calcBtn?.addEventListener('click', roundUpLOA, true);
-
-      // -------- Service Worker: force update + reload on new version ----------
-      // IMPORTANT: Also bump your CACHE_NAME version inside service-worker.js on each deploy.
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js').then((reg) => {
-          // If there's already a waiting worker, activate it immediately
-          if (reg.waiting) {
-            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-          }
-
-          // When a new worker is found, reload once it's installed
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            if (!newWorker) return;
-
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed') {
-                // Reload to pick up the latest assets
-                window.location.reload();
-              }
-            });
-          });
-        });
-      }
     })();
   </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js');
+    }
+  </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js');
+  }
+</script>
 </body>
 </html>
