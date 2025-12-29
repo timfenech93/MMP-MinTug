@@ -9,43 +9,96 @@
   <meta name="theme-color" content="#0B3C5D" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- OPTIONAL (inline styles included so you don’t have to touch styles.css) -->
+  <!-- Inline additions: Legal button + modal popup styling -->
   <style>
-    /* Disclaimer button + expandable area */
-    .disclaimerDetails {
-      margin-top: 12px;
-    }
-
-    .disclaimerDetails > summary {
-      list-style: none; /* remove default marker in some browsers */
-      cursor: pointer;
-      user-select: none;
-    }
-
-    /* remove default triangle marker (Chrome/Safari) */
-    .disclaimerDetails > summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .disclaimerBtn {
-      display: inline-block;
+    /* =========================
+       LEGAL BUTTON (AMBER)
+       ========================= */
+    .legalBtn {
       width: 100%;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.06);
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: none;
+      font-size: 14px;
       font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.15s ease;
     }
 
-    .disclaimerDetails[open] .disclaimerBtn {
+    .legalBtn.primary {
+      background: linear-gradient(135deg, #F4B400, #E09B00);
+      color: #2b1c00;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    .legalBtn.primary:hover {
       opacity: 0.95;
     }
 
-    .disclaimer {
-      margin-top: 10px;
-      font-size: 11px;
-      line-height: 1.35;
-      opacity: 0.9;
+    .legalBtn.primary:active {
+      transform: translateY(1px);
+    }
+
+    .legalBtn.secondary {
+      background: #eee;
+      color: #333;
+    }
+
+    /* =========================
+       MODAL OVERLAY
+       ========================= */
+    .modalOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 14px; /* helps on very small screens */
+    }
+
+    .modalOverlay.active {
+      display: flex;
+    }
+
+    /* =========================
+       MODAL CARD
+       ========================= */
+    .modalCard {
+      background: #ffffff;
+      width: 92%;
+      max-width: 520px;
+      max-height: 85vh;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+
+    .modalTitle {
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      border-bottom: 1px solid #eee;
+      margin: 0;
+    }
+
+    .modalBody {
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-y: auto;
+    }
+
+    .modalBody p {
+      margin: 0 0 12px 0;
+    }
+
+    .modalActions {
+      padding: 12px 16px;
+      border-top: 1px solid #eee;
     }
   </style>
 </head>
@@ -109,38 +162,86 @@
       <div class="footer">
         <hr />
 
-        <!-- CHANGED: Disclaimer hidden until user expands -->
-        <details class="disclaimerDetails" id="disclaimerDetails">
-          <summary class="disclaimerBtn" id="disclaimerSummary" role="button">
-            More information and Disclaimer, please read
-          </summary>
-
-          <p class="disclaimer">
-            Disclaimer: Whilst the Malta Maritime Pilots Co-Operative Ltd has endeavoured to ensure that the material supplied is suitable and correct at the date of publication, the Malta Maritime Pilots Co-Operative Ltd. accepts no liability for any damage or loss of any nature arising from the use of this app or any information contained within it. The material supplied is used entirely at the user’s own risk and the information or diagrams may not be reproduced without the developer's written consent. The information contained in this app has to be read and construed in conjunction with the applicable notice to mariners at that particular time of use.
-          </p>
-        </details>
+        <!-- CHANGED: Legal-looking button that opens a modal popup -->
+        <button
+          id="openDisclaimer"
+          class="legalBtn primary"
+          type="button"
+        >
+          More information and Disclaimer, please read
+        </button>
       </div>
     </main>
   </div>
 
+  <!-- LEGAL DISCLAIMER MODAL (hidden until button press) -->
+  <div id="disclaimerModal" class="modalOverlay" aria-hidden="true">
+    <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="disclaimerTitle">
+      <h2 id="disclaimerTitle" class="modalTitle">
+        Important Information & Disclaimer
+      </h2>
+
+      <div class="modalBody">
+        <p>
+          Whilst the Malta Maritime Pilots Co-Operative Ltd has endeavoured to ensure that the material supplied is suitable and correct at the date of publication, the Malta Maritime Pilots Co-Operative Ltd. accepts no liability for any damage or loss of any nature arising from the use of this app or any information contained within it.
+        </p>
+
+        <p>
+          The material supplied is used entirely at the user’s own risk and the information or diagrams may not be reproduced without the developer's written consent.
+        </p>
+
+        <p>
+          The information contained in this app has to be read and construed in conjunction with the applicable notice to mariners at that particular time of use.
+        </p>
+      </div>
+
+      <div class="modalActions">
+        <button id="closeDisclaimer" class="legalBtn secondary" type="button">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 
-  <!-- OPTIONAL: Toggle the button text when opened/closed -->
+  <!-- Modal behaviour: open/close, close on overlay click, close on ESC -->
   <script>
     (function () {
-      const d = document.getElementById('disclaimerDetails');
-      const s = document.getElementById('disclaimerSummary');
-      if (!d || !s) return;
+      const openBtn = document.getElementById('openDisclaimer');
+      const modal = document.getElementById('disclaimerModal');
+      const closeBtn = document.getElementById('closeDisclaimer');
 
-      const labelClosed = "More information and Disclaimer, please read";
-      const labelOpen = "Hide information and Disclaimer";
+      if (!openBtn || !modal || !closeBtn) return;
 
-      const update = () => {
-        s.textContent = d.open ? labelOpen : labelClosed;
+      const openModal = () => {
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        // Focus close button for accessibility
+        closeBtn.focus();
       };
 
-      d.addEventListener('toggle', update);
-      update();
+      const closeModal = () => {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        // Return focus to the opener
+        openBtn.focus();
+      };
+
+      openBtn.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+
+      // Click outside modal closes it
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      // ESC closes modal
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+          closeModal();
+        }
+      });
     })();
   </script>
 
