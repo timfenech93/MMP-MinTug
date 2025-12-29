@@ -175,6 +175,67 @@
   </style>
 </head>
 
+<script>
+/**
+ * Cache-bust + stale-client kill-switch (minimal & safe)
+ * Bump APP_VERSION on each deploy.
+ * Does NOT change any of your calculator logic.
+ */
+window.APP_VERSION = "6"; // <-- BUMP THIS EVERY DEPLOY (7, 8, 9...)
+
+(function () {
+  const VERSION_KEY = "mmp_app_version";
+  const GUARD_KEY = "mmp_cache_refresh_once";
+
+  const current = String(window.APP_VERSION || "0");
+  const previous = localStorage.getItem(VERSION_KEY);
+
+  // Prevent infinite reload loops
+  const alreadyTried = sessionStorage.getItem(GUARD_KEY) === "1";
+
+  async function clearCachesAndSW() {
+    try {
+      if ("caches" in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+    } catch (_) {}
+
+    try {
+      if ("serviceWorker" in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister()));
+      }
+    } catch (_) {}
+  }
+
+  // If version changed, nuke caches/SW and reload once
+  if (previous && previous !== current && !alreadyTried) {
+    sessionStorage.setItem(GUARD_KEY, "1");
+    clearCachesAndSW().finally(() => {
+      localStorage.setItem(VERSION_KEY, current);
+      location.reload();
+    });
+    return;
+  }
+
+  // First run: store version
+  if (!previous) {
+    localStorage.setItem(VERSION_KEY, current);
+  }
+
+  // Optional: if a new SW is waiting, activate it (doesn't alter your logic)
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistration().then(reg => {
+      if (reg && reg.waiting) {
+        reg.waiting.postMessage({ type: "SKIP_WAITING" });
+      }
+    }).catch(() => {});
+  }
+})();
+</script>
+
+  
 <body>
   <div class="app">
     <header class="header">
