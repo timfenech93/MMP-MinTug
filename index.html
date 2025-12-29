@@ -10,9 +10,6 @@
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    /* =========================
-       SHARED BUTTON BASE
-       ========================= */
     /* ===== BUTTON BASE ===== */
     .modalBtn {
       width: 100%;
@@ -22,72 +19,44 @@
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.15s ease;
       transition: transform 0.1s ease, opacity 0.15s ease;
     }
     .modalBtn:hover { opacity: 0.95; }
     .modalBtn:active { transform: translateY(1px); }
 
-    /* BLUE INFO BUTTON */
     .modalBtn.infoPrimary {
       background: linear-gradient(135deg, #0B3C5D, #145A82);
-      color: #ffffff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
       color: #fff;
     }
 
-    /* AMBER LEGAL BUTTON */
     .modalBtn.legalPrimary {
       background: linear-gradient(135deg, #F4B400, #E09B00);
       color: #2b1c00;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     }
 
     .modalBtn.secondary {
       background: #eee;
       color: #333;
-      font-weight: 600;
     }
 
-    /* Disabled state (for Calculate + Accept) */
-    button:disabled,
-    .modalBtn:disabled {
     button:disabled {
       opacity: 0.55;
       cursor: not-allowed;
-      transform: none !important;
-      box-shadow: none !important;
     }
 
-    /* =========================
-       BOX ABOVE DISCLAIMER BUTTON
-       ========================= */
     .preReadBox {
-      margin: 12px 0 12px 0;
       margin: 12px 0;
       padding: 12px;
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.18);
       background: rgba(255,255,255,0.06);
     }
 
     .preReadTitle {
       font-size: 13px;
       font-weight: 800;
-      margin: 0 0 10px 0;
-      opacity: 0.95;
       margin-bottom: 10px;
     }
 
-    .preReadHint {
-      margin: 10px 0 0 0;
-      font-size: 12px;
-      opacity: 0.85;
-    }
-
-    /* =========================
-       MODAL OVERLAY
-       ========================= */
     .modalOverlay {
       position: fixed;
       inset: 0;
@@ -96,20 +65,11 @@
       align-items: center;
       justify-content: center;
       z-index: 9999;
-      padding: 14px; /* helps on very small screens */
       padding: 14px;
     }
     .modalOverlay.active { display: flex; }
 
-    .modalOverlay.active {
-      display: flex;
-    }
-
-    /* =========================
-       MODAL CARD
-       ========================= */
     .modalCard {
-      background: #ffffff;
       background: #fff;
       width: 92%;
       max-width: 560px;
@@ -117,7 +77,6 @@
       border-radius: 16px;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
       overflow: hidden;
     }
 
@@ -126,7 +85,6 @@
       font-size: 16px;
       font-weight: 900;
       border-bottom: 1px solid #eee;
-      margin: 0;
     }
 
     .modalBody {
@@ -136,25 +94,6 @@
       overflow-y: auto;
     }
 
-    .modalBody p {
-      margin: 0 0 12px 0;
-    }
-
-    .modalBody ol {
-      margin: 10px 0 12px 18px;
-      padding: 0;
-    }
-
-    .modalBody li {
-      margin: 0 0 8px 0;
-    }
-
-    .modalBody a {
-      color: #0B3C5D;
-      font-weight: 700;
-      text-decoration: underline;
-    }
-
     .modalActions {
       padding: 12px 16px;
       border-top: 1px solid #eee;
@@ -162,41 +101,10 @@
       gap: 10px;
       flex-wrap: wrap;
     }
-
-    .ackRow {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed #ddd;
-    }
-
-    .ackRow input {
-      margin-top: 3px;
-    }
-
-    .ackText {
-      font-size: 12.5px;
-      line-height: 1.35;
-      color: #333;
-    }
   </style>
 </head>
 
 <body>
-  <div class="app">
-    <header class="header">
-      <div class="brand">
-        <img class="logo" src="icons/icon-192.png" alt="App icon" />
-        <h1 class="title">MMP MinTug</h1>
-      </div>
-
-      <div class="controls">
-        <div class="row">
-          <button id="btnBerth" class="chip chip-selected" type="button">Berthing</button>
-          <button id="btnUnberth" class="chip" type="button">Unberthing</button>
-        </div>
 <div class="app">
   <header class="header">
     <div class="brand">
@@ -204,140 +112,38 @@
       <h1 class="title">MMP MinTug</h1>
     </div>
 
-        <label class="field">
-          <span class="label">Jetty / Location</span>
-          <select id="locationSelect" class="input"></select>
-        </label>
     <div class="controls">
       <div class="row">
         <button id="btnBerth" class="chip chip-selected">Berthing</button>
         <button id="btnUnberth" class="chip">Unberthing</button>
       </div>
 
-        <label class="field">
-          <span class="label">LOA (m)</span>
-          <input id="loaInput" class="input" inputmode="decimal" placeholder="e.g. 280" />
-        </label>
       <label class="field">
         <span class="label">Jetty / Location</span>
         <select id="locationSelect" class="input"></select>
       </label>
 
-        <button id="calcBtn" class="primary" type="button">Calculate</button>
       <label class="field">
         <span class="label">LOA (m)</span>
         <input id="loaInput" class="input" inputmode="decimal" placeholder="e.g. 280.125" />
       </label>
 
-        <div id="error" class="error" role="alert" aria-live="polite"></div>
-      </div>
-    </header>
       <button id="calcBtn" class="primary">Calculate</button>
       <div id="error" class="error"></div>
     </div>
   </header>
 
-    <main class="results" id="results">
-      <div id="emptyState" class="muted">
-        Select Berth, Choose Berthing or Unberthing, Enter LOA and press <b>Calculate</b>.
-      </div>
   <main class="results">
     <div class="footer">
       <hr />
 
-      <section id="resultCard" class="card hidden" aria-live="polite">
-        <div class="resultTop">
-          <div class="resultLabel">Required tugs</div>
-          <div id="tugsOut" class="tugs">—</div>
-        </div>
-
-        <div class="kv">
-          <div class="k">LOA Group</div>
-          <div id="bandOut" class="v">—</div>
-        </div>
-
-        <div class="block">
-          <div class="blockTitle">Notes or Exceptions</div>
-          <div id="ruleOut" class="blockBody muted">—</div>
-        </div>
-
-        <div class="block">
-          <div class="blockTitle">Additional notes</div>
-          <div id="notesOut" class="blockBody muted">—</div>
-        </div>
-      </section>
-
-      <div class="footer">
-        <hr />
-
-        <!-- PRE-READ (forced before Calculate) -->
-        <div class="preReadBox">
-          <div class="preReadTitle">Please read before using the calculator.</div>
-
-          <button id="openPreRead" class="modalBtn infoPrimary" type="button">
-            Please read before using the calculator
-          </button>
-
-          <p id="preReadHint" class="preReadHint">
-            You must read and acknowledge the above before you can use <b>Calculate</b>.
-          </p>
-        </div>
-
-        <!-- Disclaimer -->
-        <button id="openDisclaimer" class="modalBtn legalPrimary" type="button">
-          Disclaimer
       <div class="preReadBox">
         <div class="preReadTitle">Please read before using the calculator.</div>
         <button id="openPreRead" class="modalBtn infoPrimary">
           Please read before using the calculator
         </button>
       </div>
-    </main>
-  </div>
 
-  <!-- PRE-READ MODAL -->
-  <div id="preReadModal" class="modalOverlay" aria-hidden="true">
-    <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="preReadTitle">
-      <h2 id="preReadTitle" class="modalTitle">
-        Please read before using the calculator
-      </h2>
-
-      <div class="modalBody">
-        <p>The requirements for tug usage provided by this app are being made on the basis of the following:</p>
-
-        <ol>
-          <li>That they do not impinge upon the rights and obligations of ships Master and Pilots undertaking ship movements, to conduct their operations in accordance with ordinary practices of good seamanship.</li>
-          <li>That the Ship's Master always retains the right to require additional tug resources should he deem fit.</li>
-          <li>That the Chief Pilot or the Pilot conducting the movement may recommend additional tug or pilot resources as they deem fit and agreed by the Master, on the basis of their professional judgement and after taking into consideration the prevailing circumstances and conditions.</li>
-          <li>That regardless of weather and other conditions and considerations, the Harbour Master is the ultimate arbiter when an issue of safety arises in the context of a request being made by the ship owner for the provisions of lesser tug resources than those listed below.</li>
-          <li>The Authority reserves the right, at her own discretion, to alter Tug resources as listed below, taking into consideration the circumstances of the case.</li>
-          <li>These norms apply for normal conditions.</li>
-          <li>In case of disabled vessels, cold moves or exceptional circumstances, including but not limited to, inclement weather, impracticable approaches, confined terminals and vessel displacement to power ratio, Tug and Pilot requirements may be increased based on an assessment conducted by the Ship's Master and the Pilot and confirmed by the Harbour Master.</li>
-          <li>Tug/s over and above the minimum tug requirements as set out in the attached Annexes may be ordered on a standby basis. This also applies to vessels that are exempt from these requirements. Tug/s ordered on a standby basis will be deployed to the area of operation and will be charged at a rate of 50% of the Towage (Tariff of Rates) Regulations, subject that the tug/s is/are not requested to take an active part in the ship assist operation. In the case tug/s is/are requested to assist during the ship assist operation, the full rate as per Towage (Tariff of Rates) Regulations shall be levied.</li>
-          <li>Day light restrictions apply in the case of specific berths and docking operations.</li>
-        </ol>
-
-        <p>
-          <b>N.B.</b> For more information please refer to the Minimum Towage Requirement, latest revision.
-          At the time of writing, the latest revision is <b>3.0</b>, published as <b>Port Notice 02 of 2025</b>.
-        </p>
-
-        <p>
-          Official document:
-          <a
-            href="https://www.transport.gov.mt/include/filestreaming.asp?fileid=10554"
-            target="_blank"
-            rel="noopener noreferrer"
-          >Port Notice 02/2025 — Minimum Towage Requirements (Rev 3.0)</a>
-        </p>
-
-        <div class="ackRow">
-          <input id="ackCheckbox" type="checkbox" />
-          <label for="ackCheckbox" class="ackText">
-            I confirm that I have read and understood the above information and I acknowledge that the output of this calculator does not replace professional judgement and applicable notices/regulations.
-          </label>
-        </div>
-      </div>
       <button id="openDisclaimer" class="modalBtn legalPrimary">
         Disclaimer
       </button>
@@ -368,46 +174,11 @@
       </label>
     </div>
 
-      <div class="modalActions">
-        <button id="acceptPreRead" class="modalBtn infoPrimary" type="button" disabled>
-          I Agree / Continue
-        </button>
-        <button id="closePreRead" class="modalBtn secondary" type="button">
-          Close
-        </button>
-      </div>
     <div class="modalActions">
       <button id="acceptPreRead" class="modalBtn infoPrimary" disabled>I Agree / Continue</button>
       <button id="closePreRead" class="modalBtn secondary">Close</button>
     </div>
   </div>
-
-  <!-- DISCLAIMER MODAL -->
-  <div id="disclaimerModal" class="modalOverlay" aria-hidden="true">
-    <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="disclaimerTitle">
-      <h2 id="disclaimerTitle" class="modalTitle">
-        Important Information & Disclaimer
-      </h2>
-
-      <div class="modalBody">
-        <p>
-          Whilst the Malta Maritime Pilots Co-Operative Ltd has endeavoured to ensure that the material supplied is suitable and correct at the date of publication, the Malta Maritime Pilots Co-Operative Ltd. accepts no liability for any damage or loss of any nature arising from the use of this app or any information contained within it.
-        </p>
-
-        <p>
-          The material supplied is used entirely at the user’s own risk and the information or diagrams may not be reproduced without the developer's written consent.
-        </p>
-
-        <p>
-          The information contained in this app has to be read and construed in conjunction with the applicable notice to mariners at that particular time of use.
-        </p>
-      </div>
-
-      <div class="modalActions">
-        <button id="closeDisclaimer" class="modalBtn secondary" type="button">
-          Close
-        </button>
-      </div>
 </div>
 
 <!-- DISCLAIMER MODAL -->
@@ -424,51 +195,6 @@
       <button id="closeDisclaimer" class="modalBtn secondary">Close</button>
     </div>
   </div>
-
-  <script src="app.js"></script>
-
-  <script>
-    (function () {
-      // -------- Modal helper ----------
-      function setupModal(openBtnId, modalId, closeBtnId) {
-        const openBtn = document.getElementById(openBtnId);
-        const modal = document.getElementById(modalId);
-        const closeBtn = document.getElementById(closeBtnId);
-
-        if (!openBtn || !modal || !closeBtn) return;
-
-        const openModal = () => {
-          // Close any other open modal first
-          document.querySelectorAll('.modalOverlay.active').forEach(m => {
-            m.classList.remove('active');
-            m.setAttribute('aria-hidden', 'true');
-          });
-
-          modal.classList.add('active');
-          modal.setAttribute('aria-hidden', 'false');
-          closeBtn.focus();
-        };
-
-        const closeModal = () => {
-          modal.classList.remove('active');
-          modal.setAttribute('aria-hidden', 'true');
-          openBtn.focus();
-        };
-
-        openBtn.addEventListener('click', openModal);
-        closeBtn.addEventListener('click', closeModal);
-
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) closeModal();
-        });
-
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal();
-          }
-        });
-
-        return { openModal, closeModal, modal, openBtn, closeBtn };
 </div>
 
 <script src="app.js"></script>
@@ -519,24 +245,9 @@
     }, true);
   }
 
-      // Disclaimer modal
-      setupModal('openDisclaimer', 'disclaimerModal', 'closeDisclaimer');
-
-      // Pre-read modal
-      const preRead = setupModal('openPreRead', 'preReadModal', 'closePreRead');
-
-      // -------- Forced "Please read" gate ----------
-      const STORAGE_KEY = 'mmp_preread_accepted_v1';
-
-      const calcBtn = document.getElementById('calcBtn');
-      const hint = document.getElementById('preReadHint');
-
-      const ackCheckbox = document.getElementById('ackCheckbox');
-      const acceptBtn = document.getElementById('acceptPreRead');
   /* ===== LOA ROUND-UP FIX (CRITICAL) ===== */
   const loaInput = document.getElementById('loaInput');
 
-      const isAccepted = () => localStorage.getItem(STORAGE_KEY) === 'true';
   const roundUpLOA = () => {
     if (!loaInput || loaInput.value.trim() === '') return;
     const n = Number(loaInput.value);
@@ -544,71 +255,15 @@
     loaInput.value = Math.ceil(n).toString();
   };
 
-      const setAcceptedUI = (accepted) => {
-        if (!calcBtn) return;
   // Round when leaving field
   loaInput?.addEventListener('blur', roundUpLOA);
 
-        calcBtn.disabled = !accepted;
-        calcBtn.setAttribute('aria-disabled', String(!accepted));
   // Round BEFORE backend logic
   calcBtn?.addEventListener('click', roundUpLOA, true);
 
-        if (hint) {
-          hint.style.display = accepted ? 'none' : 'block';
-        }
-      };
 })();
 </script>
 
-      // Initial state on load
-      setAcceptedUI(isAccepted());
-
-      // If not accepted, block Calculate clicks and prompt modal
-      if (calcBtn) {
-        calcBtn.addEventListener('click', (e) => {
-          if (!isAccepted()) {
-            e.preventDefault();
-            e.stopPropagation();
-            // Open the pre-read modal if user tries to calculate
-            if (preRead && preRead.openModal) preRead.openModal();
-            return;
-          }
-        }, true); // capture to intercept before app.js handlers
-      }
-
-      // Enable "I Agree" only when checkbox is ticked
-      if (ackCheckbox && acceptBtn) {
-        const syncAccept = () => {
-          acceptBtn.disabled = !ackCheckbox.checked;
-        };
-        ackCheckbox.addEventListener('change', syncAccept);
-        syncAccept();
-
-        acceptBtn.addEventListener('click', () => {
-          localStorage.setItem(STORAGE_KEY, 'true');
-          localStorage.setItem(STORAGE_KEY + '_ts', new Date().toISOString());
-          setAcceptedUI(true);
-
-          // close modal
-          const modal = document.getElementById('preReadModal');
-          if (modal) {
-            modal.classList.remove('active');
-            modal.setAttribute('aria-hidden', 'true');
-          }
-
-          // focus Calculate for convenience
-          if (calcBtn) calcBtn.focus();
-        });
-      }
-    })();
-  </script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./service-worker.js');
-    }
-  </script>
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js');
