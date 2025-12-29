@@ -9,39 +9,65 @@
   <meta name="theme-color" content="#0B3C5D" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Inline additions: Legal button + modal popup styling -->
+  <!-- Inline additions: Legal + Info modal popup styling -->
   <style>
     /* =========================
-       LEGAL BUTTON (AMBER)
+       SHARED BUTTON BASE
        ========================= */
-    .legalBtn {
+    .modalBtn {
       width: 100%;
       padding: 14px 16px;
       border-radius: 14px;
       border: none;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.15s ease;
     }
 
-    .legalBtn.primary {
+    .modalBtn:hover { opacity: 0.95; }
+    .modalBtn:active { transform: translateY(1px); }
+
+    /* =========================
+       BLUE (INFO) BUTTON
+       ========================= */
+    .modalBtn.infoPrimary {
+      background: linear-gradient(135deg, #0B3C5D, #145A82);
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    /* =========================
+       AMBER (LEGAL) BUTTON
+       ========================= */
+    .modalBtn.legalPrimary {
       background: linear-gradient(135deg, #F4B400, #E09B00);
       color: #2b1c00;
       box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     }
 
-    .legalBtn.primary:hover {
-      opacity: 0.95;
-    }
-
-    .legalBtn.primary:active {
-      transform: translateY(1px);
-    }
-
-    .legalBtn.secondary {
+    .modalBtn.secondary {
       background: #eee;
       color: #333;
+      font-weight: 600;
+    }
+
+    /* =========================
+       BOX ABOVE DISCLAIMER BUTTON
+       ========================= */
+    .preReadBox {
+      margin: 12px 0 12px 0;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .preReadTitle {
+      font-size: 13px;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+      opacity: 0.95;
     }
 
     /* =========================
@@ -68,7 +94,7 @@
     .modalCard {
       background: #ffffff;
       width: 92%;
-      max-width: 520px;
+      max-width: 560px;
       max-height: 85vh;
       border-radius: 16px;
       display: flex;
@@ -80,7 +106,7 @@
     .modalTitle {
       padding: 16px;
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 800;
       border-bottom: 1px solid #eee;
       margin: 0;
     }
@@ -94,6 +120,15 @@
 
     .modalBody p {
       margin: 0 0 12px 0;
+    }
+
+    .modalBody ol {
+      margin: 10px 0 12px 18px;
+      padding: 0;
+    }
+
+    .modalBody li {
+      margin: 0 0 8px 0;
     }
 
     .modalActions {
@@ -162,10 +197,23 @@
       <div class="footer">
         <hr />
 
-        <!-- CHANGED: Legal-looking button that opens a modal popup -->
+        <!-- NEW: Box above the disclaimer button -->
+        <div class="preReadBox">
+          <div class="preReadTitle">Please read before using the calculator.</div>
+
+          <button
+            id="openPreRead"
+            class="modalBtn infoPrimary"
+            type="button"
+          >
+            Please read before using the calculator
+          </button>
+        </div>
+
+        <!-- Existing: Legal-looking button that opens the disclaimer modal -->
         <button
           id="openDisclaimer"
-          class="legalBtn primary"
+          class="modalBtn legalPrimary"
           type="button"
         >
           More information and Disclaimer, please read
@@ -174,7 +222,38 @@
     </main>
   </div>
 
-  <!-- LEGAL DISCLAIMER MODAL (hidden until button press) -->
+  <!-- NEW: PRE-READ MODAL -->
+  <div id="preReadModal" class="modalOverlay" aria-hidden="true">
+    <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="preReadTitle">
+      <h2 id="preReadTitle" class="modalTitle">
+        Please read before using the calculator
+      </h2>
+
+      <div class="modalBody">
+        <p>The requirements for tug usage provided by this app are being made on the basis of the following:</p>
+
+        <ol>
+          <li>That they do not impinge upon the rights and obligations of ships Master and Pilots undertaking ship movements, to conduct their operations in accordance with ordinary practices of good seamanship.</li>
+          <li>That the Ship's Master always retains the right to require additional tug resources should he deem fit.</li>
+          <li>That the Chief Pilot or the Pilot conducting the movement may recommend additional tug or pilot resources as they deem fit and agreed by the Master, on the basis of their professional judgement and after taking into consideration the prevailing circumstances and conditions.</li>
+          <li>That regardless of weather and other conditions and considerations, the Harbour Master is the ultimate arbiter when an issue of safety arises in the context of a request being made by the ship owner for the provisions of lesser tug resources than those listed below.</li>
+          <li>The Authority reserves the right, at her own discretion, to alter Tug resources as listed below, taking into consideration the circumstances of the case.</li>
+          <li>These norms apply for normal conditions.</li>
+          <li>In case of disabled vessels, cold moves or exceptional circumstances, including but not limited to, inclement weather, impracticable approaches, confined terminals and vessel displacement to power ratio, Tug and Pilot requirements may be increased based on an assessment conducted by the Ship's Master and the Pilot and confirmed by the Harbour Master.</li>
+          <li>Tug/s over and above the minimum tug requirements as set out in the attached Annexes may be ordered on a standby basis. This also applies to vessels that are exempt from these requirements. Tug/s ordered on a standby basis will be deployed to the area of operation and will be charged at a rate of 50% of the Towage (Tariff of Rates) Regulations, subject that the tug/s is/are not requested to take an active part in the ship assist operation. In the case tug/s is/are requested to assist during the ship assist operation, the full rate as per Towage (Tariff of Rates) Regulations shall be levied.</li>
+          <li>Day light restrictions apply in the case of specific berths and docking operations.</li>
+        </ol>
+
+        <p><b>N.B.</b> For more information please refer to the Minimum Towage Requirement, latest revision. At the time of writing, the latest revision is 3.0, published as Port Notice 02 of 2025.</p>
+      </div>
+
+      <div class="modalActions">
+        <button id="closePreRead" class="modalBtn secondary" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXISTING: LEGAL DISCLAIMER MODAL -->
   <div id="disclaimerModal" class="modalOverlay" aria-hidden="true">
     <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="disclaimerTitle">
       <h2 id="disclaimerTitle" class="modalTitle">
@@ -196,52 +275,57 @@
       </div>
 
       <div class="modalActions">
-        <button id="closeDisclaimer" class="legalBtn secondary" type="button">
-          Close
-        </button>
+        <button id="closeDisclaimer" class="modalBtn secondary" type="button">Close</button>
       </div>
     </div>
   </div>
 
   <script src="app.js"></script>
 
-  <!-- Modal behaviour: open/close, close on overlay click, close on ESC -->
+  <!-- Modal behaviour: open/close for both modals, close on overlay click, close on ESC -->
   <script>
     (function () {
-      const openBtn = document.getElementById('openDisclaimer');
-      const modal = document.getElementById('disclaimerModal');
-      const closeBtn = document.getElementById('closeDisclaimer');
+      function setupModal(openBtnId, modalId, closeBtnId) {
+        const openBtn = document.getElementById(openBtnId);
+        const modal = document.getElementById(modalId);
+        const closeBtn = document.getElementById(closeBtnId);
 
-      if (!openBtn || !modal || !closeBtn) return;
+        if (!openBtn || !modal || !closeBtn) return;
 
-      const openModal = () => {
-        modal.classList.add('active');
-        modal.setAttribute('aria-hidden', 'false');
-        // Focus close button for accessibility
-        closeBtn.focus();
-      };
+        const openModal = () => {
+          // Close any other open modal first
+          document.querySelectorAll('.modalOverlay.active').forEach(m => {
+            m.classList.remove('active');
+            m.setAttribute('aria-hidden', 'true');
+          });
 
-      const closeModal = () => {
-        modal.classList.remove('active');
-        modal.setAttribute('aria-hidden', 'true');
-        // Return focus to the opener
-        openBtn.focus();
-      };
+          modal.classList.add('active');
+          modal.setAttribute('aria-hidden', 'false');
+          closeBtn.focus();
+        };
 
-      openBtn.addEventListener('click', openModal);
-      closeBtn.addEventListener('click', closeModal);
+        const closeModal = () => {
+          modal.classList.remove('active');
+          modal.setAttribute('aria-hidden', 'true');
+          openBtn.focus();
+        };
 
-      // Click outside modal closes it
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-      });
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
 
-      // ESC closes modal
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-          closeModal();
-        }
-      });
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+          }
+        });
+      }
+
+      setupModal('openDisclaimer', 'disclaimerModal', 'closeDisclaimer');
+      setupModal('openPreRead', 'preReadModal', 'closePreRead');
     })();
   </script>
 
